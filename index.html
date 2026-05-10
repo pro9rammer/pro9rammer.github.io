@@ -1,12 +1,786 @@
 <!doctype html>
-<html lang="en">
+<html lang="ko">
 <head>
-  <meta charset="utf-8">
-  <title>tc.audio Loop</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>tc.audio Apps</title>
+  <meta name="description" content="tc.audio apps for music practice, A/B loop, tempo, pitch, playlists, and focused listening." />
+  <style>
+    :root {
+      --bg: #08070d;
+      --bg2: #11101a;
+      --card: rgba(255, 255, 255, 0.075);
+      --card2: rgba(255, 255, 255, 0.045);
+      --text: #f6f3ff;
+      --muted: #b9b1ca;
+      --line: rgba(255, 255, 255, 0.12);
+      --purple: #9b5cff;
+      --purple2: #6f7dff;
+      --blue: #42c8ff;
+      --green: #67e8a6;
+      --shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", Arial, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 20% 10%, rgba(155, 92, 255, 0.38), transparent 34%),
+        radial-gradient(circle at 85% 18%, rgba(66, 200, 255, 0.18), transparent 28%),
+        radial-gradient(circle at 50% 100%, rgba(111, 125, 255, 0.24), transparent 34%),
+        linear-gradient(180deg, #07070c 0%, #11101a 55%, #08070d 100%);
+      min-height: 100vh;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .page {
+      width: min(1120px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      backdrop-filter: blur(16px);
+      background: rgba(8, 7, 13, 0.62);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .nav {
+      width: min(1120px, calc(100% - 32px));
+      margin: 0 auto;
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .brand-mark {
+      width: 38px;
+      height: 38px;
+      border-radius: 13px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, var(--purple), var(--blue));
+      box-shadow: 0 10px 30px rgba(155, 92, 255, 0.35);
+    }
+
+    .brand-mark svg {
+      width: 25px;
+      height: 25px;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .nav-links a:hover {
+      color: var(--text);
+    }
+
+    .hero {
+      padding: 88px 0 58px;
+      display: grid;
+      grid-template-columns: 1.06fr 0.94fr;
+      gap: 34px;
+      align-items: center;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.06);
+      color: #d8ceff;
+      font-size: 13px;
+      margin-bottom: 18px;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 18px rgba(103, 232, 166, 0.8);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(44px, 7vw, 78px);
+      line-height: 0.98;
+      letter-spacing: -0.065em;
+    }
+
+    .grad {
+      background: linear-gradient(100deg, #fff 0%, #c9b7ff 42%, #5fd4ff 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .hero p {
+      margin: 22px 0 0;
+      color: var(--muted);
+      font-size: 18px;
+      line-height: 1.72;
+      max-width: 620px;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 30px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      min-height: 48px;
+      padding: 0 18px;
+      border-radius: 15px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.07);
+      color: var(--text);
+      font-weight: 700;
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.22);
+      transition: transform 0.16s ease, background 0.16s ease, border-color 0.16s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      border-color: rgba(255, 255, 255, 0.22);
+      background: rgba(255, 255, 255, 0.105);
+    }
+
+    .btn.primary {
+      border: 0;
+      background: linear-gradient(135deg, var(--purple), var(--purple2));
+      box-shadow: 0 18px 50px rgba(155, 92, 255, 0.35);
+    }
+
+    .phone-card {
+      min-height: 520px;
+      border: 1px solid var(--line);
+      border-radius: 34px;
+      background:
+        linear-gradient(145deg, rgba(255,255,255,0.12), rgba(255,255,255,0.035)),
+        radial-gradient(circle at 80% 15%, rgba(66, 200, 255, 0.18), transparent 36%),
+        radial-gradient(circle at 20% 90%, rgba(155, 92, 255, 0.22), transparent 34%);
+      box-shadow: var(--shadow);
+      padding: 22px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .phone-card::before {
+      content: "";
+      position: absolute;
+      inset: -80px -40px auto auto;
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      background: rgba(155, 92, 255, 0.35);
+      filter: blur(45px);
+    }
+
+    .mock-player {
+      position: relative;
+      z-index: 1;
+      height: 100%;
+      border-radius: 28px;
+      background: rgba(7, 7, 12, 0.76);
+      border: 1px solid rgba(255, 255, 255, 0.11);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .mock-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .track {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--line);
+    }
+
+    .disc {
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #222 0 18%, #d8d8e4 19% 21%, #72728a 22% 45%, #15151f 46% 100%);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.25);
+      flex: 0 0 auto;
+    }
+
+    .track strong {
+      display: block;
+      font-size: 15px;
+      margin-bottom: 4px;
+    }
+
+    .track span {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .wave {
+      height: 86px;
+      border-radius: 18px;
+      background:
+        linear-gradient(90deg, transparent 12%, rgba(41, 166, 255, 0.15) 12% 76%, transparent 76%),
+        repeating-linear-gradient(90deg, rgba(255,255,255,0.18) 0 3px, transparent 3px 14px);
+      border: 1px solid var(--line);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .wave::before,
+    .wave::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: #ff5a75;
+    }
+
+    .wave::before { left: 12%; }
+    .wave::after { left: 76%; }
+
+    .controls {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+      align-items: center;
+    }
+
+    .ctrl {
+      height: 44px;
+      border-radius: 15px;
+      background: rgba(255, 255, 255, 0.065);
+      border: 1px solid var(--line);
+      display: grid;
+      place-items: center;
+      color: #ddd7ef;
+      font-weight: 800;
+    }
+
+    .play {
+      height: 56px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, var(--purple), var(--purple2));
+      box-shadow: 0 14px 40px rgba(155, 92, 255, 0.32);
+      font-size: 22px;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin: 26px 0 0;
+    }
+
+    .mini {
+      padding: 14px;
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.055);
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .mini b {
+      display: block;
+      color: var(--text);
+      margin-bottom: 4px;
+      font-size: 14px;
+    }
+
+    section {
+      padding: 54px 0;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: clamp(30px, 4vw, 44px);
+      letter-spacing: -0.045em;
+    }
+
+    .section-head p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.65;
+      max-width: 540px;
+    }
+
+    .apps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .app-card {
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.04));
+      border-radius: 28px;
+      padding: 22px;
+      box-shadow: 0 16px 50px rgba(0,0,0,0.23);
+      min-height: 330px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .app-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, var(--purple), var(--blue));
+      display: grid;
+      place-items: center;
+      margin-bottom: 18px;
+      box-shadow: 0 14px 36px rgba(111, 125, 255, 0.28);
+    }
+
+    .app-icon.alt {
+      background: linear-gradient(135deg, #2f2a46, #1b1b2a);
+      border: 1px solid var(--line);
+    }
+
+    .app-icon svg {
+      width: 36px;
+      height: 36px;
+    }
+
+    .app-card h3 {
+      margin: 0 0 10px;
+      font-size: 22px;
+      letter-spacing: -0.03em;
+    }
+
+    .badge {
+      display: inline-flex;
+      width: fit-content;
+      align-items: center;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      color: #e3d9ff;
+      background: rgba(155, 92, 255, 0.16);
+      border: 1px solid rgba(155, 92, 255, 0.26);
+      margin-bottom: 14px;
+    }
+
+    .app-card p {
+      color: var(--muted);
+      line-height: 1.68;
+      margin: 0 0 18px;
+    }
+
+    .app-card .btn {
+      margin-top: auto;
+      width: 100%;
+    }
+
+    .features {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+    }
+
+    .feature {
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 20px;
+      background: var(--card2);
+      display: flex;
+      gap: 14px;
+    }
+
+    .feature .num {
+      width: 34px;
+      height: 34px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      background: rgba(155, 92, 255, 0.17);
+      color: #d9caff;
+      font-weight: 900;
+      flex: 0 0 auto;
+    }
+
+    .feature h3 {
+      margin: 0 0 6px;
+      font-size: 18px;
+    }
+
+    .feature p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    .download {
+      border: 1px solid var(--line);
+      border-radius: 34px;
+      background:
+        linear-gradient(135deg, rgba(155, 92, 255, 0.18), rgba(66, 200, 255, 0.08)),
+        rgba(255, 255, 255, 0.05);
+      padding: 34px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 22px;
+      align-items: center;
+      box-shadow: var(--shadow);
+    }
+
+    .download h2 {
+      margin-bottom: 10px;
+    }
+
+    .download p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    footer {
+      border-top: 1px solid var(--line);
+      padding: 30px 0 44px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .footer-inner {
+      width: min(1120px, calc(100% - 32px));
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .footer-inner a {
+      color: #d8ceff;
+    }
+
+    @media (max-width: 900px) {
+      .hero {
+        grid-template-columns: 1fr;
+        padding-top: 56px;
+      }
+
+      .phone-card {
+        min-height: 460px;
+      }
+
+      .apps {
+        grid-template-columns: 1fr;
+      }
+
+      .features {
+        grid-template-columns: 1fr;
+      }
+
+      .feature-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .download {
+        grid-template-columns: 1fr;
+      }
+
+      .section-head {
+        display: block;
+      }
+
+      .section-head p {
+        margin-top: 12px;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .nav-links {
+        display: none;
+      }
+
+      .hero {
+        padding-top: 42px;
+      }
+
+      h1 {
+        font-size: 44px;
+      }
+
+      .hero p {
+        font-size: 16px;
+      }
+
+      .feature-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .download {
+        padding: 24px;
+      }
+    }
+  </style>
 </head>
 <body>
-  <h1>tc.audio Loop</h1>
-  <p>Audio practice player for A/B loops, tempo, pitch, and playlists.</p>
+  <header>
+    <nav class="nav">
+      <a class="brand" href="#top" aria-label="tc.audio home">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M17.5 39.5C9 39.5 7.5 25 17.5 24.5C28 24 35.5 40 46.5 39.5C56 39 56 25 46.5 24.5C35.5 24 28.5 39.5 17.5 39.5Z" stroke="white" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+        <span>tc.audio</span>
+      </a>
+      <div class="nav-links">
+        <a href="#apps">Apps</a>
+        <a href="#features">Features</a>
+        <a href="#download">Download</a>
+        <a href="/app-ads.txt">app-ads.txt</a>
+      </div>
+    </nav>
+  </header>
+
+  <main id="top" class="page">
+    <section class="hero">
+      <div>
+        <div class="eyebrow"><span class="dot"></span> Music practice apps by tc.audio</div>
+        <h1>Loop, repeat,<br><span class="grad">practice better.</span></h1>
+        <p>
+          tc.audio builds simple audio tools for musicians, singers, dancers, language learners,
+          and listeners who need precise control over how they practice and listen.
+        </p>
+        <div class="actions">
+          <a class="btn primary" href="https://play.google.com/store/apps/details?id=com.tcaudio.loop" target="_blank" rel="noopener">Download tc.audio Loop</a>
+          <a class="btn" href="#apps">View apps</a>
+        </div>
+        <div class="feature-grid" aria-label="Main highlights">
+          <div class="mini"><b>A/B Loop</b>Repeat exact sections</div>
+          <div class="mini"><b>Tempo</b>Slow down practice parts</div>
+          <div class="mini"><b>Pitch</b>Adjust key for practice</div>
+          <div class="mini"><b>Playlists</b>Organize local audio</div>
+        </div>
+      </div>
+
+      <div class="phone-card" aria-label="tc.audio Loop preview">
+        <div class="mock-player">
+          <div class="mock-top"><span>Now Playing</span><span>Playlist</span></div>
+          <div class="track">
+            <div class="disc" aria-hidden="true"></div>
+            <div>
+              <strong>Practice Track</strong>
+              <span>A/B loop · tempo · pitch</span>
+            </div>
+          </div>
+          <div class="wave" aria-hidden="true"></div>
+          <div class="controls" aria-hidden="true">
+            <div class="ctrl">⏮</div>
+            <div class="ctrl">10</div>
+            <div class="ctrl play">▶</div>
+            <div class="ctrl">10</div>
+            <div class="ctrl">⏭</div>
+          </div>
+          <div class="feature">
+            <div class="num">A</div>
+            <div>
+              <h3>Precise loop points</h3>
+              <p>Save the section you need and repeat it while practicing.</p>
+            </div>
+          </div>
+          <div class="feature">
+            <div class="num">B</div>
+            <div>
+              <h3>Export loop sections</h3>
+              <p>Keep useful practice parts and export selected loop audio.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="apps">
+      <div class="section-head">
+        <h2>tc.audio Apps</h2>
+        <p>Current and previous tc.audio apps for focused listening, practice, and audio control.</p>
+      </div>
+
+      <div class="apps">
+        <article class="app-card">
+          <div class="app-icon" aria-hidden="true">
+            <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M17.5 39.5C9 39.5 7.5 25 17.5 24.5C28 24 35.5 40 46.5 39.5C56 39 56 25 46.5 24.5C35.5 24 28.5 39.5 17.5 39.5Z" stroke="white" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <span class="badge">Android · Google Play</span>
+          <h3>tc.audio Loop</h3>
+          <p>
+            A music practice player for A/B loop, tempo and pitch control, loop saving,
+            export, and playlist management. Built for musicians, dancers, vocalists,
+            and anyone who repeats specific parts while practicing.
+          </p>
+          <a class="btn primary" href="https://play.google.com/store/apps/details?id=com.tcaudio.loop" target="_blank" rel="noopener">Get it on Google Play</a>
+        </article>
+
+        <article class="app-card">
+          <div class="app-icon alt" aria-hidden="true">
+            <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M24 18V44C24 48.5 20.5 52 16 52C11.5 52 8 48.5 8 44C8 39.5 11.5 36 16 36C18 36 19.5 36.5 21 37.5V18H24Z" fill="#b99cff"/>
+              <path d="M24 18L50 12V20L24 26V18Z" fill="#6fd6ff"/>
+              <path d="M50 20V40C50 44.5 46.5 48 42 48C37.5 48 34 44.5 34 40C34 35.5 37.5 32 42 32C44 32 45.7 32.6 47 33.6V20H50Z" fill="#9b5cff"/>
+            </svg>
+          </div>
+          <span class="badge">iOS · Previous version</span>
+          <h3>tc.audio</h3>
+          <p>
+            The earlier iPhone version of tc.audio is available on the App Store.
+            A renewed iOS version based on the newer tc.audio Loop direction is being prepared.
+          </p>
+          <a class="btn" href="https://apps.apple.com/search?term=tc.audio" target="_blank" rel="noopener">Search on App Store</a>
+        </article>
+
+        <article class="app-card">
+          <div class="app-icon alt" aria-hidden="true">
+            <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M32 8C21 8 12 17 12 28C12 43 32 56 32 56C32 56 52 43 52 28C52 17 43 8 32 8Z" fill="url(#g)"/>
+              <path d="M22 30C26 23 38 23 42 30" stroke="white" stroke-width="4" stroke-linecap="round"/>
+              <path d="M26 38C29 35 35 35 38 38" stroke="white" stroke-width="4" stroke-linecap="round"/>
+              <defs>
+                <linearGradient id="g" x1="12" y1="8" x2="52" y2="56" gradientUnits="userSpaceOnUse">
+                  <stop stop-color="#9b5cff"/>
+                  <stop offset="1" stop-color="#42c8ff"/>
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
+          <span class="badge">In planning</span>
+          <h3>Future tc.audio projects</h3>
+          <p>
+            More music and sound tools may follow, including practice-focused utilities,
+            listening support, and audio features designed for creators and learners.
+          </p>
+          <a class="btn" href="#download">Follow updates</a>
+        </article>
+      </div>
+    </section>
+
+    <section id="features">
+      <div class="section-head">
+        <h2>Built for practice</h2>
+        <p>tc.audio Loop focuses on the repeated, detailed listening that musicians and learners actually need.</p>
+      </div>
+
+      <div class="features">
+        <div class="feature">
+          <div class="num">1</div>
+          <div>
+            <h3>A/B section repeat</h3>
+            <p>Set start and end points and repeat only the part you want to practice.</p>
+          </div>
+        </div>
+        <div class="feature">
+          <div class="num">2</div>
+          <div>
+            <h3>Tempo and pitch control</h3>
+            <p>Slow down difficult parts or adjust key while keeping your practice flow.</p>
+          </div>
+        </div>
+        <div class="feature">
+          <div class="num">3</div>
+          <div>
+            <h3>Loop save and export</h3>
+            <p>Save useful loop sections and export selected audio parts for later use.</p>
+          </div>
+        </div>
+        <div class="feature">
+          <div class="num">4</div>
+          <div>
+            <h3>Playlist management</h3>
+            <p>Create practice playlists and organize local audio files for rehearsals.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="download">
+      <div class="download">
+        <div>
+          <h2>Download tc.audio Loop</h2>
+          <p>
+            Available now on Google Play for Android. The renewed iOS version is planned for a future release.
+          </p>
+        </div>
+        <a class="btn primary" href="https://play.google.com/store/apps/details?id=com.tcaudio.loop" target="_blank" rel="noopener">Open Google Play</a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+      <span>© <span id="year"></span> tc.audio. All rights reserved.</span>
+      <span><a href="/app-ads.txt">app-ads.txt</a></span>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
 </body>
 </html>
