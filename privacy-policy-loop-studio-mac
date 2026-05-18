@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<title>tc.audio Loop Studio - Privacy Policy</title>
+
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        background: linear-gradient(135deg, #0d1017, #171c26);
+        color: rgba(255,255,255,0.88);
+        font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+        line-height: 1.7;
+    }
+
+    .container {
+        max-width: 760px;
+        margin: 0 auto;
+        padding: 80px 28px;
+    }
+
+    h1 {
+        font-size: 2.6rem;
+        margin-bottom: 12px;
+        letter-spacing: -0.03em;
+    }
+
+    .subtitle {
+        color: rgba(255,255,255,0.55);
+        margin-bottom: 48px;
+    }
+
+    h2 {
+        margin-top: 42px;
+        margin-bottom: 14px;
+        font-size: 1.2rem;
+    }
+
+    p {
+        color: rgba(255,255,255,0.78);
+    }
+
+    ul {
+        padding-left: 22px;
+    }
+
+    li {
+        margin-bottom: 10px;
+        color: rgba(255,255,255,0.78);
+    }
+
+    .panel {
+        background: rgba(255,255,255,0.04);
+        border: 1px solid rgba(255,255,255,0.06);
+        border-radius: 18px;
+        padding: 28px;
+        margin-top: 28px;
+        backdrop-filter: blur(12px);
+    }
+
+    .footer {
+        margin-top: 64px;
+        color: rgba(255,255,255,0.42);
+        font-size: 0.92rem;
+    }
+
+    .accent {
+        color: #67d4ff;
+    }
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+```
+<h1>tc.audio Loop Studio</h1>
+
+<div class="subtitle">
+    Privacy Policy
+    <br />
+    Last updated: May 18, 2026
+</div>
+
+<div class="panel">
+
+    <p>
+        <span class="accent">tc.audio Loop Studio</span> does not collect,
+        store, or share personal information.
+    </p>
+
+    <p>
+        The app processes audio files locally on your Mac device for
+        playback, looping, waveform visualization, pitch shifting,
+        speed adjustment, and practice workflows.
+    </p>
+
+    <p>
+        No audio files or personal data are uploaded to external servers.
+    </p>
+
+</div>
+
+<h2>Information Collection</h2>
+
+<p>tc.audio Loop Studio does not:</p>
+
+<ul>
+    <li>Require account creation</li>
+    <li>Track user activity</li>
+    <li>Collect analytics</li>
+    <li>Share personal information with third parties</li>
+    <li>Upload audio content to cloud servers</li>
+</ul>
+
+<h2>File Access</h2>
+
+<p>
+    The app may request access to audio files selected by the user in order to:
+</p>
+
+<ul>
+    <li>Import audio files</li>
+    <li>Generate waveforms</li>
+    <li>Perform playback and looping features</li>
+    <li>Adjust pitch and playback speed</li>
+</ul>
+
+<p>
+    All processing is performed locally on the user's device.
+</p>
+
+<h2>Contact</h2>
+
+<p>
+    If you have questions about this Privacy Policy,
+    you may contact:
+</p>
+
+<p class="accent">
+    tc.audio
+</p>
+
+<div class="footer">
+    © 2026 tc.audio Loop Studio
+</div>
+```
+
+</div>
+
+</body>
+</html>
